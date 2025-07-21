@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Users</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  />
+</head>
+<body class="bg-dark text-white">
+
+  <div class="container mt-5">
+      <!-- Navbar -->
+  <nav class="navbar navbar-dark p-3">
+    <a class="navbar-brand ms-3" href="#">Reported Incidents</a>
+        <div>
+        <a href="{{ url_for('home') }}" class="text-light me-3">Home</a>
+        <a href="{{ url_for('about') }}" class="text-light me-3">About</a>
+        <a href="{{ url_for('status') }}" class="text-light me-3">Check Crime Status</a>
+        <a href="{{ url_for('incident.report_incident') }}" class="text-light me-3">Report Incident</a>
+        <a href="{{ url_for('auth.logout') }}" class="text-light">Logout</a>
+        </div>
+  </nav>
+    <h2 class="mb-4">User Management</h2>
+    <a href="{{ url_for('home') }}" class="btn btn-secondary mb-3">← Back to Home</a>
+
+    <table class="table table-dark table-bordered">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role|capitalize }}</td>
+          <td>
+            <div class="d-flex align-items-start">
+
+              <!-- Update Role Form -->
+              <form
+                action="{{ url_for('auth.update_user_role') }}"
+                method="POST"
+                class="d-flex me-2"
+              >
+                <input type="hidden" name="user_id" value="{{ user._id }}" />
+                <select name="new_role" class="form-select me-2">
+                  <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
+                  <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+                <button type="submit" class="btn btn-success btn-sm">Update</button>
+              </form>
+
+              <!-- Delete Button (disabled for self) -->
+              {% if user.name != session.get('username') %}
+                <button
+                  class="btn btn-danger btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteModal{{ user._id }}"
+                >
+                  Delete
+                </button>
+              {% else %}
+                <button class="btn btn-danger btn-sm" disabled>Delete</button>
+              {% endif %}
+
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div
+              class="modal fade"
+              id="deleteModal{{ user._id }}"
+              tabindex="-1"
+              aria-labelledby="deleteModalLabel{{ user._id }}"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content bg-dark text-white">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ user._id }}">
+                      Confirm Deletion
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close btn-close-white"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete user
+                    <strong>{{ user.name }}</strong>?
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                    <form
+                      action="{{ url_for('auth.delete_user') }}"
+                      method="POST"
+                      class="m-0"
+                    >
+                      <input type="hidden" name="user_id" value="{{ user._id }}" />
+                      <button type="submit" class="btn btn-danger">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>

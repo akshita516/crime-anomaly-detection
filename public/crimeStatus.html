@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Scene Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+        }
+        .card {
+            background-color: #1e1e1e;
+            color: white;
+        }
+        .navbar, .footer {
+            background-color: #000;
+        }
+    </style>
+    <script>
+    function analyzeMedia() {
+        const fileInput = document.getElementById("media-upload");
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/predict", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("media-status").textContent = "Prediction: " + data.prediction;
+        })
+        .catch(err => {
+            document.getElementById("media-status").textContent = "Error analyzing media.";
+        });
+    }
+</script>
+
+</head>
+<body>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark p-3">
+        <a class="navbar-brand ms-3" href="#">Crime Scene Detection</a>
+        <div>
+            <a href="./homePage.html" class="text-light me-3">Home</a>
+            <a href="./about.html" class="text-light me-3">About</a>
+            <a href="./crimeStatus.html" class="text-light me-3">Check Crime Status</a>
+            <a href="./login.html" class="text-light">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Left Section (col-9) -->
+            <div class="col-md-9">
+                <h3>Hi, User</h3>
+                <p>User Type: <strong>Admin</strong></p>
+
+                <!-- AI Media Analysis -->
+                <div class="card p-3 shadow-lg mt-4">
+                    <h5 class="text-center">Upload Image/Video for Crime Detection</h5>
+                    <input type="file" id="media-upload" class="form-control mb-2" accept="image/*,video/*">
+                    <button class="btn btn-warning w-100" onclick="analyzeMedia()">Upload & Analyze</button>
+                    <p id="media-status" class="text-center mt-2"></p>
+                </div>
+                
+                <!-- CCTV Tracking and Alerts -->
+                <div class="card p-3 shadow-lg mt-4">
+                    <h5 class="text-center">Live CCTV Tracking</h5>
+                    <div id="cctv-feed" class="text-center">[CCTV Feed Placeholder]</div>
+                    <h6 class="mt-3">Crime Alerts:</h6>
+                    <ul id="alert-list" class="list-group"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer text-white text-center p-3 mt-4">
+        &copy; 2025 Crime Scene Detection. All rights reserved.
+    </footer>
+    
+    <script>
+        function analyzeMedia() {
+            document.getElementById("media-status").textContent = "Media uploaded. Analyzing for crime situations...";
+        }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

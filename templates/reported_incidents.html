@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reported Incidents</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body { background-color: #121212; color: white; }
+    .navbar, .footer { background-color: #000; }
+    .btn-action { font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark p-3">
+    <a class="navbar-brand ms-3" href="#">Reported Incidents</a>
+        <div>
+        <a href="{{ url_for('home') }}" class="text-light me-3">Home</a>
+        <a href="{{ url_for('about') }}" class="text-light me-3">About</a>
+        <a href="{{ url_for('status') }}" class="text-light me-3">Check Crime Status</a>
+        <a href="{{ url_for('incident.report_incident') }}" class="text-light me-3">Report Incident</a>
+        <a href="{{ url_for('auth.logout') }}" class="text-light">Logout</a>
+        </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h3 class="mb-4">All Reported Incidents</h3>
+    <div class="table-responsive">
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Reported By</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for incident in incidents %}
+          <tr id="incident-{{ incident._id }}">
+            <td>{{ incident.title }}</td>
+            <td>{{ incident.description }}</td>
+            <td class="status-cell">{{ incident.status|capitalize }}</td>
+            <td>{{ incident.reporter }}</td>
+            <td class="actions-cell">
+              {% if incident.status == 'reported' %}
+                <button
+                  onclick="updateStatus('{{ incident._id }}', 'confirmed')"
+                  class="btn btn-success btn-sm btn-action"
+                >Confirm</button>
+
+              {% elif incident.status == 'confirmed' %}
+                <button
+                  class="btn btn-info btn-sm btn-action"
+                  data-bs-toggle="modal"
+                  data-bs-target="#resolveModal{{ incident._id }}"
+                >Mark Resolved</button>
+
+              {% elif incident.status == 'resolved' %}
+                <span class="badge bg-success">Resolved</span><br>
+                <strong>Actions Taken:</strong><br>
+                <small>{{ incident.actions_taken }}</small>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Resolve Modals -->
+  {% for incident in incidents %}
+    {% if incident.status == 'confirmed' %}
+    <div
+      class="modal fade"
+      id="resolveModal{{ incident._id }}"
+      tabindex="-1"
+      aria-labelledby="resolveModalLabel{{ incident._id }}"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+          <div class="modal-header">
+            <h5 class="modal-title" id="resolveModalLabel{{ incident._id }}">
+              Resolve Incident
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <label
+              for="actionsTaken{{ incident._id }}"
+              class="form-label"
+            >Actions Taken</label>
+            <textarea
+              id="actionsTaken{{ incident._id }}"
+              class="form-control"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              onclick="resolveIncident('{{ incident._id }}')"
+              class="btn btn-success"
+            >Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+
+  <!-- Footer -->
+  <footer class="footer text-white text-center p-3 mt-4">
+    &copy; 2025 Crime Scene Detection. All rights reserved.
+  </footer>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+  <script>
+    function updateStatus(id, status, actionsTaken = "") {
+      fetch(`/incident/update_status/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status, actions_taken: actionsTaken })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const row = document.getElementById(`incident-${id}`);
+          row.querySelector(".status-cell").textContent =
+            status.charAt(0).toUpperCase() + status.slice(1);
+
+          const cell = row.querySelector(".actions-cell");
+
+          if (status === "confirmed") {
+            cell.innerHTML = `
+              <button
+                class="btn btn-info btn-sm btn-action"
+                data-bs-toggle="modal"
+                data-bs-target="#resolveModal${id}"
+              >Mark Resolved</button>
+            `;
+          } else if (status === "resolved") {
+            cell.innerHTML = `
+              <span class="badge bg-success">Resolved</span><br>
+              <strong>Actions Taken:</strong><br>
+              <small>${data.actions_taken}</small>
+            `;
+          }
+        }
+      });
+    }
+
+    function resolveIncident(id) {
+      const actions = document.getElementById(`actionsTaken${id}`).value;
+      updateStatus(id, "resolved", actions);
+
+      const modalEl = document.getElementById(`resolveModal${id}`);
+      bootstrap.Modal.getInstance(modalEl).hide();
+    }
+  </script>
+</body>
+</html>

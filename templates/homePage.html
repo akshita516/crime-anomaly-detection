@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crime Scene Detection</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background-color: #121212; color: white; }
+    .card { background-color: #1e1e1e; color: white; }
+    .navbar, .footer { background-color: #000; }
+    .modal-content { background-color: #1e1e1e; color: white; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark p-3">
+  <a class="navbar-brand ms-3" href="#">Crime Scene Detection</a>
+        <div>
+        <a href="{{ url_for('home') }}" class="text-light me-3">Home</a>
+        <a href="{{ url_for('about') }}" class="text-light me-3">About</a>
+        <a href="{{ url_for('status') }}" class="text-light me-3">Check Crime Status</a>
+        <a href="{{ url_for('incident.report_incident') }}" class="text-light me-3">Report Incident</a>
+        <a href="{{ url_for('auth.logout') }}" class="text-light">Logout</a>
+        </div>
+</nav>
+
+<!-- Marquee -->
+<marquee class="bg-danger text-white p-2">Latest Crime News: Robbery in downtown | Cyber Fraud increasing | New crime prevention policies...</marquee>
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Left Side -->
+    <div class="col-md-9">
+      <h3>Hi, {{ session.get('username') or 'User' }}</h3>
+      <p>User Type: <strong>{{ session.get('role', 'Viewer')|capitalize }}</strong></p>
+
+      <!-- Chart -->
+      <div class="card p-3 shadow-lg mb-4">
+        <h5 class="text-center">Crime Analysis (Reported vs Confirmed)</h5>
+        <canvas id="crimeChart"></canvas>
+      </div>
+
+      {% if session.get('role') == 'admin' %}
+      <!-- Admin Only Section -->
+      <div class="mb-3">
+        <a href="{{ url_for('auth.manage_users') }}" class="btn btn-warning me-2">Manage Users</a>
+        <a href="{{ url_for('incident.view_reported') }}" class="btn btn-info">Reported Incidents</a>
+      </div>
+      {% endif %}
+
+      <!-- Patterns -->
+      <h5>Crime Patterns</h5>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card p-3 mb-3">
+            <h6>Theft & Burglary</h6>
+            <p>Increasing in metro cities.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 mb-3">
+            <h6>Cyber Crimes</h6>
+            <p>Rising due to digital frauds.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 mb-3">
+            <h6>Violent Crimes</h6>
+            <p>Declining due to strict laws.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="col-md-3">
+      {% if session.get('role') == 'admin' %}
+        <!-- Upload button for Admin -->
+        <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#newsModal">
+          Upload Crime News
+        </button>
+      {% endif %}
+
+      <input type="text" id="search-news" class="form-control mb-3" placeholder="Search by Location or Pattern" />
+
+      <div class="border p-2">
+        <h5>Crime News</h5>
+        <ul id="news-list" class="list-unstyled">
+          {% for item in news %}
+            <li class="mb-2">
+              <strong>{{ item.title }}</strong> - {{ item.location }}<br/>
+              {{ item.content }}<br/>
+              <small class="text-muted">{{ item.timestamp.strftime("%d %b %Y %I:%M %p") }}</small>
+              <hr/>
+            </li>
+          {% else %}
+            <li>No crime news posted yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for News Upload -->
+<div class="modal fade" id="newsModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('news.upload_news') }}">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload Crime News</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" name="title" class="form-control mb-2" placeholder="News Title" required />
+          <input type="text" name="location" class="form-control mb-2" placeholder="Location" required />
+          <textarea name="content" class="form-control mb-2" placeholder="News Content" rows="3" required></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success w-100">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer text-white text-center p-3 mt-4">
+  &copy; 2025 Crime Scene Detection. All rights reserved.
+</footer>
+
+<!-- Scripts -->
+<script>
+  const ctx = document.getElementById('crimeChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Reported', 'Confirmed'],
+      datasets: [{
+        label: 'Incidents',
+        data: [{{ reported_count or 0 }}, {{ true_count or 0 }}],
+        backgroundColor: ['orange', 'green']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: false
+        }
+      }
+    }
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

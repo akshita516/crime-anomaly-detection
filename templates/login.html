@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crime Anomaly Detection - Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<header class="bg-black pt-3 text-center">
+    <h2 class="text-light">Crime Anomaly Detection</h2>
+    <marquee class="bg-danger p-2 text-white">Breaking News: Recent crime incidents updated live...</marquee>
+</header>
+
+<div class="container-fluid d-flex min-vh-100 align-items-center justify-content-center bg-dark">
+    <div class="row w-100">
+        <!-- Left Side: Image Carousel -->
+        <div class="col-md-6">
+            <div id="crimeCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://www.l-tron.com/wp-content/uploads/2018/02/iStock-587938200-1.jpg" class="d-block w-100" alt="Crime Scene 1">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://cms-artifacts.artlist.io/content/motion-array/431731/Crime_Scene_Photography_high_resolution_preview_431731.jpg?Expires=2036686640856&Key-Pair-Id=K2ZDLYDZI2R1DF&Signature=ntltF3JYZyxdWyKPFjRFJurCugau3NEUSoHyXEZtJyOWa55Ku9JXtR7EKvw6FtW5Zf~IXLutMJhcTkyCdkbLKJuqu95DI4QyOxwdQtznt0~wJcFdR3JObC62jnhqlCk6pwkYk3dGLM2EL-3mS~WvS4n~dPrx8jMEAK8lDZ4wN3r6fUmyX4PiZ~ou-fhMiXQ936mMI6BcC4Ghp~GNk0N0xI4KYZxkzqYBud0qEDMfMPZdec37ZeZsIj6RWAV5vkFbVlD4qvjLrQTh~affRXQdqGuJsmcUaRNxqLKOzWoQgnfqsPmhTPIegpYpJYFjOxyKQ0o-pjDHwyQbtP8EdDl~yQ__" class="d-block w-100" alt="Crime Scene 2">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://lexipol.brightspotcdn.com/dims4/default/43a7553/2147483647/strip/false/crop/1200x800%2B0%2B0/resize/1200x800%21/quality/90/?url=https%3A%2F%2Fk1-prod-lexipol.s3.us-east-2.amazonaws.com%2Fbrightspot%2F37%2Ff5%2F6325a814d5f8a5838ad30fa17ea2%2Fgettyimages-1182438304.jpg" class="d-block w-100" alt="Crime Scene 3">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://forensicexpertinvestigation.com/wp-content/uploads/2024/04/857977596CrimeScenePhotographer.jpg" class="d-block w-100" alt="Crime Scene 4">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#crimeCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#crimeCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <div class="card p-4 w-75">
+                <h4 class="text-center">Login</h4>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form action="/login" method="POST">
+                    <div class="mb-3">
+                        <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                <p class="text-center mt-3">
+                    Don't have an account? <a href="/signup" class="text-warning">Sign Up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-black text-center text-light p-3">
+    &copy; 2025 Crime Anomaly Detection. All Rights Reserved.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

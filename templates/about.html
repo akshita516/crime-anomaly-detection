@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Crime Scene Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+        }
+        .card {
+            background-color: #1e1e1e;
+            color: white;
+        }
+        .navbar, .footer {
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark p-3">
+        <a class="navbar-brand ms-3" href="index.html">Crime Scene Detection</a>
+        <div>
+        <a href="{{ url_for('home') }}" class="text-light me-3">Home</a>
+        <a href="{{ url_for('about') }}" class="text-light me-3">About</a>
+        <a href="{{ url_for('status') }}" class="text-light me-3">Check Crime Status</a>
+        <a href="{{ url_for('incident.report_incident') }}" class="text-light me-3">Report Incident</a>
+        <a href="{{ url_for('auth.logout') }}" class="text-light">Logout</a>
+        </div>
+
+    </nav>
+    
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card p-4 shadow-lg">
+                    <h2 class="text-center">About Crime Scene Detection</h2>
+                    <p>
+                        Crime Scene Detection is an AI-powered platform that leverages machine learning models to analyze images and videos, detect suspicious activities, and provide real-time alerts. Our goal is to enhance security and assist law enforcement agencies by providing accurate and timely crime predictions.
+                    </p>
+                    <h4>Features:</h4>
+                    <ul>
+                        <li>AI-based crime detection using image and video analysis.</li>
+                        <li>Real-time CCTV tracking and monitoring.</li>
+                        <li>Crime pattern analysis for predictive insights.</li>
+                        <li>Secure data storage and reporting system.</li>
+                    </ul>
+                    <h4>Our Mission:</h4>
+                    <p>
+                        Our mission is to provide cutting-edge technology to detect and prevent crimes efficiently, ensuring a safer society for everyone.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer text-white text-center p-3 mt-4">
+        &copy; 2025 Crime Scene Detection. All rights reserved.
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
