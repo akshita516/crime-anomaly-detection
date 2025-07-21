@@ -1,0 +1,26 @@
+# Dockerfile
+FROM python:3.10-slim
+
+# Prevent Python from writing .pyc, buffer logs
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Install OS-level build deps (for any C-extensions)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential \
+      gfortran \
+      libatlas-base-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy & install Python deps
+COPY requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy your app
+COPY . .
+
+# Use Gunicorn (or your start command)
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:10000"]

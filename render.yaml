@@ -1,0 +1,6 @@
+# render.yaml
+services:
+  - type: web
+    name: crime-anomaly-detection
+    env: docker
+    dockerfilePath: ./Dockerfile
